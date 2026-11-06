@@ -7,7 +7,7 @@ to an external disk (optionally Google Drive), keeps an hourly/daily/weekly hist
 restore the system 1:1 onto the same disk or a brand-new one by booting a Recovery system
 that lives on the backup disk itself.
 
-> Current version: **0.7.0** — see the [Changelog](#changelog) below.
+> Current version: **0.7.3** — see the [Changelog](#changelog) below.
 > Polish documentation: [README.pl.md](README.pl.md).
 > The user interface is available in **English and Polish** (follows the system language).
 
@@ -65,7 +65,7 @@ NVIDIA setup to the new hardware.
 ## Installation
 
 ```bash
-sudo apt install ./timevault_0.7.0_all.deb
+sudo apt install ./timevault_0.7.3_all.deb
 ```
 
 The package installs:
@@ -185,7 +185,7 @@ timevault --lang en …                        # message language: pl | en | aut
 sudo python3 -m pytest tests/      # creates loop devices under /tmp/timevault-test
 ```
 
-The suite (30 tests) runs real partitioning, formatting, backup and restore on loop devices,
+The suite (31 tests) runs real partitioning, formatting, backup and restore on loop devices,
 including dual-boot layouts and every safety rail. Release testing additionally covers:
 a minimal Ubuntu 24.04 → backup → restore → boot to login in QEMU/UEFI; Recovery booted in
 QEMU restoring onto an empty second disk with a real `grub-install`; and the restored disk
@@ -221,6 +221,30 @@ backups created by older versions keep working.
 ## Changelog
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+### [0.7.3] — 2026-11-06
+
+#### Fixed
+- Notifications put a large bell icon into the top bar (Qt's `QSystemTrayIcon.showMessage`
+  switches the tray icon to "needs attention" on GNOME) and clicking them did nothing. They are
+  now regular GNOME notifications (`notify-send`) with the TimeVault icon: clicking a
+  notification opens the app and GNOME removes it. Errors use critical urgency.
+- Package depends on `libnotify-bin`.
+
+### [0.7.2] — 2026-11-06
+
+#### Changed
+- About dialog shows the credits: *Created by: JGu* / *Supported by Claude*.
+
+### [0.7.1] — 2026-11-06
+
+#### Fixed
+- A backup in which a few files could not be fully read (restic exit code 3 — e.g.
+  `incomplete metadata … xattr.list` on a Flatpak file updated during the backup) was reported
+  as **failed**, left out of the history and skipped retention. It is now a saved backup with a
+  warning: the window shows how many files were not fully read (hover for the list) and the
+  notification mentions it. Real errors are still reported as errors. File-level errors from
+  restic's stderr are now collected too.
 
 ### [0.7.0] — 2026-11-05
 
